@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VETRA POWER - Quotation Tool</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;background:#f0f2f5;color:#222;font-size:14px;}
+
+/* –––– TOP BAR –––– */
+#bar{background:#0B2545;color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+#bar .logo{font-size:17px;font-weight:bold;letter-spacing:1px;}
+#bar .logo span{color:#e8a120;}
+#bar .btns{display:flex;gap:8px;}
+.tpbtn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:bold;cursor:pointer;}
+.tpbtn:active{background:rgba(255,255,255,0.3);}
+.tpbtn.green{background:rgba(37,211,102,0.3);border-color:#25d366;}
+
+/* –––– TABS –––– */
+#tabs{background:#fff;border-bottom:2px solid #ddd;display:flex;padding:0 12px;overflow-x:auto;}
+.tab{padding:12px 18px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:bold;color:#777;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;}
+.tab.on{color:#1a6eb5;border-bottom-color:#1a6eb5;}
+.pg{display:none;}
+.pg.on{display:block;}
+
+/* –––– PAGE WRAP –––– */
+.wrap{max-width:780px;margin:0 auto;padding:14px;}
+
+/* –––– CARD –––– */
+.card{background:#fff;border:1px solid #ccc;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:0 1px 6px rgba(0,0,0,0.07);}
+.ctitle{font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;color:#1a6eb5;border-bottom:1px solid #eee;padding-bottom:8px;margin-bottom:10px;}
+
+/* –––– 2 COL –––– */
+.g2{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-bottom:12px;}
+@media(max-width:500px){.g2{grid-template-columns:1fr;}}
+
+/* –––– FORM FIELDS –––– */
+.row{display:flex;align-items:center;margin-bottom:8px;}
+.row:last-child{margin-bottom:0;}
+.row label{width:68px;font-size:12px;font-weight:bold;color:#555;flex-shrink:0;}
+.row input,.row select{flex:1;height:33px;border:1px solid #ccc;border-radius:6px;padding:0 9px;font-size:13px;background:#fafafa;}
+.row input:focus,.row select:focus{outline:none;border-color:#1a6eb5;background:#fff;}
+
+/* –––– SEARCH –––– */
+#srch{width:100%;padding:9px 12px;border:1px solid #ccc;border-radius:7px;font-size:13px;margin-bottom:8px;background:#fafafa;}
+#srch:focus{outline:none;border-color:#1a6eb5;}
+#isel{width:100%;border:1px solid #ccc;border-radius:7px;font-size:13px;padding:3px;background:#fafafa;color:#222;}
+.abtn{width:100%;margin-top:8px;padding:11px;background:#1a6eb5;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:bold;cursor:pointer;}
+.abtn:active{background:#155a94;}
+
+/* –––– BILL TABLE –––– */
+.tscroll{overflow-x:auto;border-radius:8px;border:1px solid #ccc;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead th{background:#0B2545;color:#fff;padding:8px 7px;text-align:left;font-size:11px;}
+tbody td{border-bottom:1px solid #e8e8e8;padding:5px 7px;background:#fff;vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:#f5f7fb;}
+.qin{width:100%;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:12px;padding:2px 4px;background:#fff;}
+.qin:focus{outline:none;border-color:#1a6eb5;}
+.xbtn{background:#fee2e2;color:#dc2626;border:none;border-radius:4px;width:24px;height:24px;cursor:pointer;font-size:13px;font-weight:bold;display:inline-flex;align-items:center;justify-content:center;}
+.xbtn:active{background:#dc2626;color:#fff;}
+
+/* –––– ADJ –––– */
+.adj{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+@media(max-width:440px){.adj{grid-template-columns:1fr;}}
+.adjbox{background:#fff;border:1px solid #ccc;border-radius:8px;padding:10px 12px;}
+.adjbox label{display:block;font-size:11px;font-weight:bold;color:#555;margin-bottom:6px;text-transform:uppercase;}
+.adjin{display:flex;gap:6px;}
+.adjin input{flex:1;height:31px;border:1px solid #ccc;border-radius:6px;padding:0 8px;font-size:13px;background:#fafafa;min-width:0;}
+.adjin input:focus{outline:none;border-color:#1a6eb5;}
+.adjin select{height:31px;border:1px solid #ccc;border-radius:6px;padding:0 5px;font-size:12px;background:#fafafa;}
+
+/* –––– TOTALS –––– */
+.totbox{background:#0B2545;color:#fff;border-radius:10px;padding:14px 18px;margin-bottom:12px;}
+.trow{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;opacity:0.85;}
+.trow.big{border-top:1px solid rgba(255,255,255,0.2);margin-top:8px;padding-top:9px;font-size:19px;font-weight:bold;opacity:1;}
+.trow.big span:last-child{color:#f5c842;}
+.trow.green{color:#86efac;}
+.trow.blue{color:#93c5fd;}
+
+/* –––– REMARKS –––– */
+.rmk{background:#fff;border:1px solid #ccc;border-radius:8px;padding:9px 13px;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.rmk b{font-size:12px;color:#555;white-space:nowrap;}
+.rmk input{flex:1;border:none;background:transparent;font-size:13px;color:#222;outline:none;min-width:0;}
+
+/* –––– ACTION BTNS –––– */
+.acgrid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;margin-top:4px;}
+@media(max-width:480px){.acgrid{grid-template-columns:1fr 1fr;}}
+.acbtn{padding:12px 6px;border:none;border-radius:8px;font-size:13px;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;}
+.acbtn:active{opacity:0.85;}
+.b-pr{background:#0B2545;color:#fff;}
+.b-pdf{background:#1a6eb5;color:#fff;}
+.b-wa{background:#25d366;color:#fff;}
+.b-cl{background:#fff0f0;color:#dc2626;border:1px solid #fca5a5;}
+
+/* –––– MODAL –––– */
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:999;align-items:center;justify-content:center;padding:20px;}
+#modal.show{display:flex;}
+.mbox{background:#fff;border-radius:14px;padding:22px 18px 18px;width:100%;max-width:280px;text-align:center;}
+.mbox .mname{background:#eef2f7;border-radius:7px;padding:8px 12px;font-size:13px;font-weight:bold;color:#0B2545;margin-bottom:13px;border:1px solid #ccc;}
+.mbox input[type=number]{font-size:28px;text-align:center;width:72%;padding:8px;border:2px solid #ccc;border-radius:9px;display:block;margin:0 auto 13px;color:#222;}
+.mbox input[type=number]:focus{outline:none;border-color:#1a6eb5;}
+.mbox .mbtn{width:100%;padding:12px;background:#1a6eb5;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:8px;}
+.mbox .mcan{background:none;border:none;color:#888;cursor:pointer;font-size:13px;}
+
+/* –––– TOAST –––– */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(120px);background:#0B2545;color:#fff;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:bold;z-index:9999;transition:transform 0.3s;pointer-events:none;white-space:nowrap;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* –––– HISTORY –––– */
+.hcard{background:#fff;border:1px solid #ccc;border-radius:9px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.hcard:hover{border-color:#1a6eb5;}
+.hn{font-size:14px;font-weight:bold;}
+.hm{font-size:11px;color:#777;margin-top:2px;}
+.ha{font-size:15px;font-weight:bold;color:#1a6eb5;white-space:nowrap;}
+.hbtns{display:flex;gap:5px;flex-shrink:0;}
+.hlbtn{background:#1a6eb5;color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:bold;cursor:pointer;}
+.hdbtn{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:bold;cursor:pointer;}
+.hdbtn:active{background:#dc2626;color:#fff;}
+.empty{text-align:center;padding:36px 20px;color:#999;}
+
+/* –––– INVENTORY FORM –––– */
+.iform{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:8px;}
+@media(max-width:450px){.iform{grid-template-columns:1fr 1fr;}}
+.iform input{height:34px;border:1px solid #ccc;border-radius:7px;padding:0 9px;font-size:13px;background:#fafafa;color:#222;}
+.iform input:focus{outline:none;border-color:#1a6eb5;}
+.ibtns{display:flex;gap:8px;margin-bottom:10px;}
+.isave{flex:1;padding:10px;background:#1a6eb5;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:bold;cursor:pointer;}
+.isave:active{background:#155a94;}
+.icancel{padding:10px 14px;background:#f0f0f0;color:#333;border:1px solid #ccc;border-radius:7px;font-size:13px;cursor:pointer;}
+.icancel:active{background:#ddd;}
+.ifilter{width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;margin-bottom:8px;background:#fafafa;}
+.ifilter:focus{outline:none;border-color:#1a6eb5;}
+.iscroll{max-height:320px;overflow-y:auto;border:1px solid #ccc;border-radius:9px;}
+.iscroll table{font-size:12px;}
+.iscroll thead th{background:#0B2545;color:#fff;padding:7px 8px;font-size:11px;text-align:left;}
+.iscroll tbody td{border-bottom:1px solid #eee;padding:6px 8px;background:#fff;vertical-align:middle;}
+.iscroll tbody tr:last-child td{border-bottom:none;}
+.iscroll tbody tr:hover td{background:#f5f7fb;}
+.iebtn{background:#eee;border:1px solid #ccc;color:#333;border-radius:5px;padding:3px 9px;font-size:11px;cursor:pointer;margin-right:3px;}
+.iebtn:active{background:#ddd;}
+.idbtn{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;border-radius:5px;padding:3px 9px;font-size:11px;cursor:pointer;}
+.idbtn:active{background:#dc2626;color:#fff;}
+
+/* –––– BADGE –––– */
+.badge{background:#e8a120;color:#0B2545;font-size:10px;font-weight:bold;border-radius:20px;padding:2px 7px;margin-left:4px;}
+
+/* –––– PRINT HEADER –––– */
+.phead{display:none;}
+
+/* –––– PRINT –––– */
+@media print{
+@page{size:A4;margin:12mm;}
+body{background:#fff;}
+#bar,#tabs,.nopr,.xbtn{display:none!important;}
+.pg{display:block!important;}
+#histpg,#invpg{display:none!important;}
+.wrap{padding:0;max-width:100%;}
+.card{box-shadow:none;}
+.tscroll{border:1px solid #999;}
+thead th{background:#0B2545!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.totbox{background:#0B2545!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.phead{display:block!important;text-align:center;border-bottom:2px solid #1a6eb5;padding-bottom:10px;margin-bottom:14px;}
+input,select{border:none!important;background:transparent!important;}
+.adj,.rmk input,.acgrid{display:none!important;}
+.rmk{border:none!important;}
+.pfoot{display:block!important;}
+}
+</style>
+
+</head>
+<body>
+
+<!-- TOAST -->
+
+<div id="toast"></div>
+
+<!-- QTY MODAL -->
+
+<div id="modal">
+  <div class="mbox">
+    <div class="mname" id="mname">Item Name</div>
+    <div style="font-size:12px;color:#888;margin-bottom:8px;">Enter Quantity</div>
+    <input type="number" id="mqty" min="0.01" step="any" value="1">
+    <button class="mbtn" id="mconfirm">+ Add to Bill</button>
+    <button class="mcan" id="mclose">Cancel</button>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+
+<div id="bar">
+  <div class="logo"><span>⚡</span> VETRA POWER</div>
+  <div class="btns nopr">
+    <button class="tpbtn" id="btn-save">💾 Save</button>
+    <button class="tpbtn green" id="btn-wa">📲 WhatsApp</button>
+  </div>
+</div>
+
+<!-- TABS -->
+
+<div id="tabs" class="nopr">
+  <button class="tab on" data-pg="quopg">📝 Quotation</button>
+  <button class="tab" data-pg="histpg">🕘 History <span class="badge" id="hbadge">0</span></button>
+  <button class="tab" data-pg="invpg">📦 Inventory</button>
+</div>
+
+<!-- ========== QUOTATION PAGE ========== -->
+
+<div id="quopg" class="pg on">
+<div class="wrap">
+
+  <!-- Print header (only shows when printing) -->
+
+  <div class="phead">
+    <div style="font-size:20px;font-weight:bold;color:#0B2545;letter-spacing:2px;">⚡ VETRA POWER</div>
+    <div style="font-size:11px;color:#1a6eb5;font-weight:bold;margin:4px 0;">Electrical Solutions: Interior | Residential | Commercial | Renovation | AMC</div>
+    <div style="font-size:11px;line-height:1.7;">
+      Deep Y. Shah &nbsp;|&nbsp; 9537366551, 9913587774 &nbsp;|&nbsp; vitrapower@gmail.com &nbsp;|&nbsp; UDYAM-GJ-22-0494691
+    </div>
+  </div>
+
+  <!-- Title -->
+
+  <div style="text-align:center;margin-bottom:13px;">
+    <span style="font-size:16px;font-weight:bold;letter-spacing:2px;color:#0B2545;border-bottom:3px solid #e8a120;padding-bottom:3px;">QUOTATION</span>
+  </div>
+
+  <!-- Client + Reference -->
+
+  <div class="g2">
+    <div class="card" style="margin-bottom:0">
+      <div class="ctitle">Client Details</div>
+      <div class="row"><label>Name</label><input type="text" id="pName" placeholder="Client name"></div>
+      <div class="row"><label>Mobile</label><input type="tel" id="pMobile" placeholder="Mobile number"></div>
+      <div class="row"><label>Address</label><input type="text" id="pAddr" placeholder="Site address"></div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="ctitle">Reference</div>
+      <div class="row"><label>Quo. No.</label><input type="text" id="pQno" placeholder="e.g. VP-001"></div>
+      <div class="row"><label>Date</label><input type="date" id="pDate"></div>
+    </div>
+  </div>
+  <div style="height:12px"></div>
+
+  <!-- Search & Add -->
+
+  <div class="card nopr">
+    <div class="ctitle">Add Items</div>
+    <input type="text" id="srch" placeholder="🔍  Search inventory...">
+    <select id="isel" size="5"></select>
+    <button class="abtn" id="btn-additem">+ Add Selected Item to Bill</button>
+  </div>
+
+  <!-- Bill Table -->
+
+  <div class="card">
+    <div class="ctitle">Bill Items</div>
+    <div class="tscroll">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:28px;text-align:center">Sr</th>
+            <th>Item Description</th>
+            <th style="width:58px;text-align:center">Qty</th>
+            <th style="width:46px;text-align:center">Unit</th>
+            <th style="width:65px;text-align:right">Rate</th>
+            <th style="width:80px;text-align:right">Total</th>
+            <th style="width:32px;text-align:center" class="nopr"></th>
+          </tr>
+        </thead>
+        <tbody id="billbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Discount + Tax -->
+
+  <div class="adj nopr">
+    <div class="adjbox">
+      <label>Discount</label>
+      <div class="adjin">
+        <input type="number" id="discV" placeholder="0" min="0">
+        <select id="discT"><option value="pct">%</option><option value="flat">Rs Flat</option></select>
+      </div>
+    </div>
+    <div class="adjbox">
+      <label>GST / Tax</label>
+      <div class="adjin">
+        <input type="number" id="taxV" placeholder="0" min="0">
+        <select id="taxT"><option value="pct">%</option><option value="flat">Rs Flat</option></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Totals -->
+
+  <div class="totbox">
+    <div class="trow"><span>Subtotal</span><span>Rs <span id="tSub">0.00</span></span></div>
+    <div class="trow green" id="drow" style="display:none"><span>Discount</span><span>- Rs <span id="tDisc">0.00</span></span></div>
+    <div class="trow blue"  id="txrow" style="display:none"><span>Tax / GST</span><span>+ Rs <span id="tTax">0.00</span></span></div>
+    <div class="trow big"><span>Grand Total</span><span>Rs <span id="tGrand">0.00</span></span></div>
+  </div>
+
+  <!-- Remarks -->
+
+  <div class="rmk">
+    <b>Remarks:</b>
+    <input type="text" id="pRmk" placeholder="Payment terms, validity, notes...">
+  </div>
+
+  <!-- Print footer -->
+
+  <div class="pfoot" style="display:none;border-top:1px solid #333;padding-top:10px;font-size:11px;">
+    <div style="display:flex;justify-content:space-between;">
+      <div><b>Payment:</b> 25% Adv | 30% Wire | 25% Plate | 10% MCB | 10% Final</div>
+      <div style="text-align:right;">For, <b>VETRA POWER</b><br><br><b>Auth. Signatory</b></div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+
+  <div class="acgrid nopr">
+    <button class="acbtn b-pr" id="btn-print">🖨 Print A4</button>
+    <button class="acbtn b-pdf" id="btn-pdf">📥 PDF</button>
+    <button class="acbtn b-wa" id="btn-wa2">📲 WA</button>
+    <button class="acbtn b-cl" id="btn-clear">🗑 Clear</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ========== HISTORY PAGE ========== -->
+
+<div id="histpg" class="pg">
+<div class="wrap">
+  <div class="card">
+    <div class="ctitle">Saved Quotations</div>
+    <div id="histlist"></div>
+  </div>
+</div>
+</div>
+
+<!-- ========== INVENTORY PAGE ========== -->
+
+<div id="invpg" class="pg">
+<div class="wrap">
+  <div class="card">
+    <div class="ctitle">Add / Edit Item</div>
+    <div class="iform">
+      <input type="text" id="iName" placeholder="Item Name">
+      <input type="text" id="iUnit" placeholder="Unit (Nos/Mtr)">
+      <input type="number" id="iRate" placeholder="Rate (Rs)">
+    </div>
+    <div class="ibtns">
+      <button class="isave" id="i-savebtn">+ Save Item</button>
+      <button class="icancel" id="i-cancelbtn" style="display:none">✕ Cancel</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctitle">Inventory List</div>
+    <input type="text" class="ifilter" id="ifilter" placeholder="Filter items...">
+    <div class="iscroll">
+      <table>
+        <thead>
+          <tr><th>Item Name</th><th style="width:80px">Rate</th><th style="width:60px">Unit</th><th style="width:90px">Action</th></tr>
+        </thead>
+        <tbody id="invbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ============================================================
+//  STATE
+// ============================================================
+var INV  = [];
+var BILL = [];
+var HIST = [];
+var editIdx = null;   // inventory edit index
+var selIdx  = null;   // modal selected item index
+
+// ============================================================
+//  STORAGE HELPERS
+// ============================================================
+function load(){
+  try{ INV  = JSON.parse(localStorage.getItem('vp_inv'))  || []; }catch(e){ INV=[]; }
+  try{ BILL = JSON.parse(localStorage.getItem('vp_bill')) || []; }catch(e){ BILL=[]; }
+  try{ HIST = JSON.parse(localStorage.getItem('vp_hist')) || []; }catch(e){ HIST=[]; }
+}
+function saveInvStore(){ localStorage.setItem('vp_inv',  JSON.stringify(INV));  }
+function saveBillStore(){ localStorage.setItem('vp_bill', JSON.stringify(BILL)); }
+function saveHistStore(){ localStorage.setItem('vp_hist', JSON.stringify(HIST)); }
+function saveFields(){
+  localStorage.setItem('vp_pName',   G('pName').value);
+  localStorage.setItem('vp_pMobile', G('pMobile').value);
+  localStorage.setItem('vp_pAddr',   G('pAddr').value);
+  localStorage.setItem('vp_pQno',    G('pQno').value);
+  localStorage.setItem('vp_pDate',   G('pDate').value);
+  localStorage.setItem('vp_pRmk',    G('pRmk').value);
+  localStorage.setItem('vp_discV',   G('discV').value);
+  localStorage.setItem('vp_discT',   G('discT').value);
+  localStorage.setItem('vp_taxV',    G('taxV').value);
+  localStorage.setItem('vp_taxT',    G('taxT').value);
+}
+function loadFields(){
+  G('pName').value   = localStorage.getItem('vp_pName')   || '';
+  G('pMobile').value = localStorage.getItem('vp_pMobile') || '';
+  G('pAddr').value   = localStorage.getItem('vp_pAddr')   || '';
+  G('pQno').value    = localStorage.getItem('vp_pQno')    || '';
+  G('pDate').value   = localStorage.getItem('vp_pDate')   || todayStr();
+  G('pRmk').value    = localStorage.getItem('vp_pRmk')    || '';
+  G('discV').value   = localStorage.getItem('vp_discV')   || '';
+  G('discT').value   = localStorage.getItem('vp_discT')   || 'pct';
+  G('taxV').value    = localStorage.getItem('vp_taxV')    || '';
+  G('taxT').value    = localStorage.getItem('vp_taxT')    || 'pct';
+}
+
+// ============================================================
+//  UTILITY
+// ============================================================
+function G(id){ return document.getElementById(id); }
+function todayStr(){ return new Date().toISOString().split('T')[0]; }
+function toast(msg){
+  var t = G('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+function sortINV(){ INV.sort(function(a,b){ return a.name.localeCompare(b.name); }); }
+function grandVal(){ return parseFloat(G('tGrand').textContent) || 0; }
+
+// ============================================================
+//  INIT
+// ============================================================
+load();
+loadFields();
+sortINV();
+renderInv();
+filterItems();
+renderBill();
+calcTotals();
+renderHist();
+
+// ============================================================
+//  TABS
+// ============================================================
+document.querySelectorAll('.tab').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var pgId = btn.getAttribute('data-pg');
+    document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('on'); });
+    document.querySelectorAll('.pg').forEach(function(p){ p.classList.remove('on'); });
+    btn.classList.add('on');
+    G(pgId).classList.add('on');
+  });
+});
+
+// ============================================================
+//  INVENTORY
+// ============================================================
+G('i-savebtn').addEventListener('click', function(){
+  var name = G('iName').value.trim();
+  var unit = G('iUnit').value.trim() || 'Nos';
+  var rate = parseFloat(G('iRate').value);
+  if(!name){ alert('Enter item name!'); return; }
+  if(isNaN(rate) || rate < 0){ alert('Enter a valid rate!'); return; }
+
+  if(editIdx === null){
+    INV.push({ name:name, unit:unit, rate:rate });
+    toast('Added: ' + name);
+  } else {
+    INV[editIdx] = { name:name, unit:unit, rate:rate };
+    toast('Updated: ' + name);
+    editIdx = null;
+  }
+  sortINV();
+  saveInvStore();
+  clearInvForm();
+  renderInv();
+  filterItems();
+});
+
+G('i-cancelbtn').addEventListener('click', function(){
+  editIdx = null;
+  clearInvForm();
+});
+
+function clearInvForm(){
+  G('iName').value = '';
+  G('iUnit').value = '';
+  G('iRate').value = '';
+  G('i-savebtn').textContent = '+ Save Item';
+  G('i-cancelbtn').style.display = 'none';
+}
+
+function editInvItem(i){
+  editIdx = i;
+  G('iName').value = INV[i].name;
+  G('iUnit').value = INV[i].unit;
+  G('iRate').value = INV[i].rate;
+  G('i-savebtn').textContent = '✔ Update Item';
+  G('i-cancelbtn').style.display = '';
+  // Switch to Inventory tab
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelectorAll('.pg').forEach(function(p){ p.classList.remove('on'); });
+  document.querySelectorAll('.tab')[2].classList.add('on');
+  G('invpg').classList.add('on');
+  window.scrollTo(0, 0);
+}
+
+function deleteInvItem(i){
+  if(!confirm('Delete "' + INV[i].name + '"?')) return;
+  var n = INV[i].name;
+  INV.splice(i, 1);
+  saveInvStore();
+  renderInv();
+  filterItems();
+  toast('Deleted: ' + n);
+}
+
+G('ifilter').addEventListener('input', renderInv);
+
+function renderInv(){
+  var q    = G('ifilter').value.toLowerCase().trim();
+  var body = G('invbody');
+  body.innerHTML = '';
+  var shown = 0;
+  INV.forEach(function(item, i){
+    if(q && item.name.toLowerCase().indexOf(q) < 0) return;
+    shown++;
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + item.name + '</td>' +
+      '<td>Rs ' + item.rate + '</td>' +
+      '<td style="text-align:center">' + item.unit + '</td>' +
+      '<td style="text-align:center">' +
+        '<button class="iebtn" onclick="editInvItem(' + i + ')">Edit</button>' +
+        '<button class="idbtn" onclick="deleteInvItem(' + i + ')">Del</button>' +
+      '</td>';
+    body.appendChild(tr);
+  });
+  if(!shown){
+    body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;padding:16px;">' +
+      (INV.length ? 'No match found.' : 'No items yet. Add above.') + '</td></tr>';
+  }
+}
+
+// ============================================================
+//  SEARCH / FILTER ITEMS FOR BILL
+// ============================================================
+G('srch').addEventListener('input', filterItems);
+
+function filterItems(){
+  var q   = G('srch').value.toLowerCase().trim();
+  var sel = G('isel');
+  sel.innerHTML = '';
+  INV.forEach(function(item, i){
+    if(q && item.name.toLowerCase().indexOf(q) < 0) return;
+    var o = document.createElement('option');
+    o.value = i;
+    o.textContent = item.name + '   (Rs ' + item.rate + ' / ' + item.unit + ')';
+    sel.appendChild(o);
+  });
+}
+
+// ============================================================
+//  MODAL
+// ============================================================
+G('btn-additem').addEventListener('click', function(){
+  var sel = G('isel');
+  if(!sel.options.length){ alert('No items in inventory. Go to Inventory tab and add items first.'); return; }
+  if(sel.selectedIndex < 0) sel.selectedIndex = 0;
+  selIdx = parseInt(sel.value);
+  G('mname').textContent = INV[selIdx].name;
+  G('mqty').value = '1';
+  G('modal').classList.add('show');
+  setTimeout(function(){ G('mqty').select(); }, 80);
+});
+
+G('mclose').addEventListener('click', function(){
+  G('modal').classList.remove('show');
+});
+
+G('modal').addEventListener('click', function(e){
+  if(e.target === G('modal')) G('modal').classList.remove('show');
+});
+
+G('mconfirm').addEventListener('click', function(){
+  var qty = parseFloat(G('mqty').value);
+  if(isNaN(qty) || qty <= 0){ alert('Enter a valid quantity greater than 0!'); return; }
+  var item = INV[selIdx];
+  BILL.push({ name:item.name, unit:item.unit, rate:item.rate, qty:qty });
+  saveBillStore();
+  saveFields();
+  renderBill();
+  calcTotals();
+  G('modal').classList.remove('show');
+  G('srch').value = '';
+  filterItems();
+  toast('Added: ' + item.name);
+});
+
+// Also allow Enter key in qty input
+G('mqty').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') G('mconfirm').click();
+});
+
+// ============================================================
+//  BILL RENDER
+// ============================================================
+function renderBill(){
+  var body = G('billbody');
+  body.innerHTML = '';
+  if(!BILL.length){
+    body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;padding:18px;">No items added yet.</td></tr>';
+    return;
+  }
+  BILL.forEach(function(item, i){
+    var tot = (item.qty * item.rate).toFixed(2);
+    var tr  = document.createElement('tr');
+    tr.innerHTML =
+      '<td style="text-align:center">' + (i+1) + '</td>' +
+      '<td>' + item.name + '</td>' +
+      '<td style="text-align:center"><input class="qin" type="number" value="' + item.qty + '" min="0.01" step="any" data-i="' + i + '"></td>' +
+      '<td style="text-align:center">' + item.unit + '</td>' +
+      '<td style="text-align:right">' + item.rate + '</td>' +
+      '<td style="text-align:right;font-weight:bold">' + tot + '</td>' +
+      '<td style="text-align:center" class="nopr"><button class="xbtn" data-i="' + i + '">X</button></td>';
+    body.appendChild(tr);
+  });
+
+  // Attach qty change listeners
+  body.querySelectorAll('.qin').forEach(function(inp){
+    inp.addEventListener('change', function(){
+      var idx = parseInt(inp.getAttribute('data-i'));
+      var v   = parseFloat(inp.value);
+      if(isNaN(v) || v <= 0){ v = 1; inp.value = 1; }
+      BILL[idx].qty = v;
+      saveBillStore();
+      renderBill();
+      calcTotals();
+    });
+  });
+
+  // Attach delete listeners
+  body.querySelectorAll('.xbtn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var idx  = parseInt(btn.getAttribute('data-i'));
+      var name = BILL[idx].name;
+      BILL.splice(idx, 1);
+      saveBillStore();
+      renderBill();
+      calcTotals();
+      toast('Removed: ' + name);
+    });
+  });
+}
+
+// ============================================================
+//  CALC TOTALS
+// ============================================================
+function calcTotals(){
+  var sub = 0;
+  BILL.forEach(function(it){ sub += it.qty * it.rate; });
+
+  var dv = parseFloat(G('discV').value) || 0;
+  var dt = G('discT').value;
+  var tv = parseFloat(G('taxV').value)  || 0;
+  var tt = G('taxT').value;
+
+  var disc  = (dt === 'pct') ? (sub * dv / 100) : dv;
+  var after = Math.max(0, sub - disc);
+  var tax   = (tt === 'pct') ? (after * tv / 100) : tv;
+  var grand = after + tax;
+
+  G('tSub').textContent   = sub.toFixed(2);
+  G('tGrand').textContent = grand.toFixed(2);
+
+  if(dv > 0){
+    G('tDisc').textContent    = disc.toFixed(2);
+    G('drow').style.display   = 'flex';
+  } else {
+    G('drow').style.display   = 'none';
+  }
+  if(tv > 0){
+    G('tTax').textContent     = tax.toFixed(2);
+    G('txrow').style.display  = 'flex';
+  } else {
+    G('txrow').style.display  = 'none';
+  }
+
+  saveFields();
+}
+
+// Attach adj listeners
+['discV','discT','taxV','taxT'].forEach(function(id){
+  G(id).addEventListener('input', calcTotals);
+  G(id).addEventListener('change', calcTotals);
+});
+
+// Attach field save on input
+['pName','pMobile','pAddr','pQno','pDate','pRmk'].forEach(function(id){
+  G(id).addEventListener('input', saveFields);
+  G(id).addEventListener('change', saveFields);
+});
+
+// ============================================================
+//  CLEAR BILL
+// ============================================================
+G('btn-clear').addEventListener('click', function(){
+  if(!confirm('Clear all bill items and client info?')) return;
+  BILL = [];
+  ['pName','pMobile','pAddr','pQno','pRmk','discV','taxV'].forEach(function(id){ G(id).value = ''; });
+  G('pDate').value = todayStr();
+  G('discT').value = 'pct';
+  G('taxT').value  = 'pct';
+  saveBillStore();
+  saveFields();
+  renderBill();
+  calcTotals();
+  toast('Bill cleared');
+});
+
+// ============================================================
+//  SAVE TO HISTORY
+// ============================================================
+G('btn-save').addEventListener('click', doSave);
+function doSave(){
+  if(!BILL.length){ alert('Bill is empty! Add items first.'); return; }
+  var name  = G('pName').value.trim() || 'Unnamed';
+  var entry = {
+    id:     Date.now(),
+    name:   name,
+    qno:    G('pQno').value    || '-',
+    date:   G('pDate').value   || todayStr(),
+    grand:  G('tGrand').textContent,
+    mobile: G('pMobile').value,
+    addr:   G('pAddr').value,
+    rmk:    G('pRmk').value,
+    discV:  G('discV').value,
+    discT:  G('discT').value,
+    taxV:   G('taxV').value,
+    taxT:   G('taxT').value,
+    items:  JSON.parse(JSON.stringify(BILL))
+  };
+  HIST.unshift(entry);
+  saveHistStore();
+  renderHist();
+  toast('Saved: ' + name);
+}
+
+// ============================================================
+//  HISTORY
+// ============================================================
+function renderHist(){
+  G('hbadge').textContent = HIST.length;
+  var list = G('histlist');
+  if(!HIST.length){
+    list.innerHTML = '<div class="empty"><div style="font-size:36px;margin-bottom:8px">📭</div>No saved quotations yet.<br>Tap 💾 Save to save current bill.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  HIST.forEach(function(h, i){
+    var div = document.createElement('div');
+    div.className = 'hcard';
+    div.innerHTML =
+      '<div style="min-width:0">' +
+        '<div class="hn">' + h.name + '</div>' +
+        '<div class="hm">' + h.qno + ' | ' + h.date + ' | ' + h.items.length + ' items</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">' +
+        '<div class="ha">Rs ' + h.grand + '</div>' +
+        '<div class="hbtns">' +
+          '<button class="hlbtn" onclick="loadHist(' + i + ')">Load</button>' +
+          '<button class="hdbtn" onclick="delHist(' + i + ')">Del</button>' +
+        '</div>' +
+      '</div>';
+    list.appendChild(div);
+  });
+}
+
+function loadHist(i){
+  if(!confirm('Load "' + HIST[i].name + '"? Current bill will be replaced.')) return;
+  var h = HIST[i];
+  BILL = JSON.parse(JSON.stringify(h.items));
+  G('pName').value   = h.name;
+  G('pMobile').value = h.mobile;
+  G('pAddr').value   = h.addr;
+  G('pQno').value    = h.qno;
+  G('pDate').value   = h.date;
+  G('pRmk').value    = h.rmk;
+  G('discV').value   = h.discV || '';
+  G('discT').value   = h.discT || 'pct';
+  G('taxV').value    = h.taxV  || '';
+  G('taxT').value    = h.taxT  || 'pct';
+  saveBillStore();
+  saveFields();
+  renderBill();
+  calcTotals();
+  // Switch to Quotation tab
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelectorAll('.pg').forEach(function(p){ p.classList.remove('on'); });
+  document.querySelectorAll('.tab')[0].classList.add('on');
+  G('quopg').classList.add('on');
+  toast('Loaded: ' + h.name);
+}
+
+function delHist(i){
+  if(!confirm('Delete "' + HIST[i].name + '"?')) return;
+  var n = HIST[i].name;
+  HIST.splice(i, 1);
+  saveHistStore();
+  renderHist();
+  toast('Deleted: ' + n);
+}
+
+// ============================================================
+//  WHATSAPP
+// ============================================================
+G('btn-wa').addEventListener('click',  doWA);
+G('btn-wa2').addEventListener('click', doWA);
+
+function doWA(){
+  if(!BILL.length){ alert('Bill is empty! Add items first.'); return; }
+  var name  = G('pName').value.trim()  || '-';
+  var mob   = G('pMobile').value.trim() || '';
+  var qno   = G('pQno').value.trim()   || '-';
+  var date  = G('pDate').value         || '-';
+  var grand = G('tGrand').textContent;
+  var sub   = G('tSub').textContent;
+  var rmk   = G('pRmk').value.trim();
+  var dv    = parseFloat(G('discV').value) || 0;
+  var tv    = parseFloat(G('taxV').value)  || 0;
+  var disc  = G('tDisc').textContent;
+  var tax   = G('tTax').textContent;
+
+  var lines = [];
+  lines.push('*VETRA POWER - Quotation*');
+  lines.push('--------------------------------');
+  lines.push('*Client:* ' + name);
+  lines.push('*Quo No:* ' + qno);
+  lines.push('*Date:* '   + date);
+  lines.push('--------------------------------');
+  BILL.forEach(function(it, idx){
+    lines.push((idx+1) + '. ' + it.name);
+    lines.push('   ' + it.qty + ' ' + it.unit + ' x Rs' + it.rate + ' = Rs' + (it.qty * it.rate).toFixed(2));
+  });
+  lines.push('--------------------------------');
+  lines.push('Subtotal: Rs' + sub);
+  if(dv > 0) lines.push('Discount: -Rs' + disc);
+  if(tv > 0) lines.push('Tax/GST: +Rs' + tax);
+  lines.push('*Grand Total: Rs' + grand + '*');
+  if(rmk){ lines.push(''); lines.push('Note: ' + rmk); }
+  lines.push('');
+  lines.push('VETRA POWER | Deep Y. Shah');
+  lines.push('Ph: 9537366551 / 9913587774');
+
+  var msg = lines.join('\n');
+
+  // Parse phone
+  var phone = mob.replace(/\D/g, '');
+  if(phone.length > 10){
+    // remove country code
+    phone = phone.slice(phone.length - 10);
+  }
+
+  var url;
+  if(phone.length === 10){
+    url = 'https://wa.me/91' + phone + '?text=' + encodeURIComponent(msg);
+  } else {
+    url = 'https://wa.me/?text=' + encodeURIComponent(msg);
+  }
+  window.open(url, '_blank');
+}
+
+// ============================================================
+//  PRINT
+// ============================================================
+G('btn-print').addEventListener('click', function(){ window.print(); });
+
+// ============================================================
+//  PDF (print-to-PDF with visible header/footer)
+// ============================================================
+G('btn-pdf').addEventListener('click', function(){
+  // Show print elements temporarily
+  var ph   = document.querySelector('.phead');
+  var pf   = document.querySelector('.pfoot');
+  var nopr = document.querySelectorAll('.nopr');
+
+  ph.style.display = 'block';
+  pf.style.display = 'block';
+  nopr.forEach(function(el){ el.style.display = 'none'; });
+
+  var old = document.title;
+  document.title = 'VETRA_' + (G('pQno').value || 'Quo') + '_' + (G('pName').value || 'Client');
+
+  window.print();
+
+  // Restore after print dialog
+  document.title = old;
+  ph.style.display  = 'none';
+  pf.style.display  = 'none';
+  nopr.forEach(function(el){ el.style.display = ''; });
+});
+
+</script>
+
+</body>
+</html>
